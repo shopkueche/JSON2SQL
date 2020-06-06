@@ -1,7 +1,7 @@
 import pymysql, os, json, requests
 from datetime import datetime
 
-# read JSON file which is in the next parent folder
+# Download JSON File
 file = requests.get(url='YOURURLTOJSON')
 
 #save JSON file to disk
@@ -15,12 +15,10 @@ json_data=open(file).read()
 json_obj = json.loads(json_data)
 
 
-# do validation and checks before insert
+# do validation of the JSON
 def validate_string(val):
    if val != None:
         if type(val) is int:
-            #for x in val:
-            #   print(x)
             return str(val).encode('utf-8')
         else:
             return val
@@ -40,6 +38,7 @@ for i, item in enumerate(json_obj["Sendungsnummern"]['Sendungen']):
     d = datetime.strptime(item.get("liefdatum"), '%d.%m.%Y')
     liefdatum = d.strftime('%Y-%m-%d')
 
+# SQL Insert
     cursor.execute("INSERT IGNORE INTO testp (sdgid, kdlsnr, carrier, nve, liefdatum) VALUES (%s,%s,	%s, %s, %s)", (sdgid, kdlsnr, carrier, nve, liefdatum))
 con.commit()
 con.close()
